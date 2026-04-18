@@ -3,20 +3,25 @@
 html, body {
   margin: 0;
   padding: 0;
+  height: 100%;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   background: #fafafa;
   color: #1a1a1a;
-  line-height: 1.6;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 main {
-  max-width: 520px;
-  margin: 0 auto;
-  padding: 5rem 1.5rem 3rem;
+  text-align: center;
+  padding: 2rem;
 }
 
 h1 {
-  font-size: 2.5rem;
+  font-size: clamp(2.5rem, 8vw, 4rem);
   margin: 0;
   letter-spacing: -0.03em;
   font-weight: 700;
@@ -25,36 +30,6 @@ h1 span { color: #2563eb; }
 
 .tagline {
   color: #666;
-  margin: 0.25rem 0 2rem;
-  font-size: 1.05rem;
-}
-
-.intro {
+  margin: 0.5rem 0 0;
   font-size: 1.15rem;
-  margin: 0 0 2rem;
 }
-
-.services {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 2.5rem;
-  border-top: 1px solid #e5e5e5;
-}
-
-.services li {
-  padding: 0.85rem 0;
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.contact {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.contact a {
-  color: #2563eb;
-  text-decoration: none;
-  font-weight: 500;
-}
-.contact a:hover { text-decoration: underline; }
