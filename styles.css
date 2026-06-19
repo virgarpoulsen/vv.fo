@@ -16,20 +16,33 @@ body {
 }
 
 .stage {
-  height: 100vh;
+  position: fixed;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
 }
 
 .logo {
-  font-size: clamp(4rem, 18vw, 12rem);
+  font-size: clamp(6rem, 30vw, 24rem);
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1;
   user-select: none;
+  opacity: 0;
+  animation: fade-in 2.5s ease-out forwards;
 }
 
 .logo span {
   color: #4f8cff;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
