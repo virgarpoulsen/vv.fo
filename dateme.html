@@ -68,7 +68,7 @@
       color: #fff;
       background: linear-gradient(135deg, #ff4d8d, #ff2d6f);
       box-shadow: 0 10px 30px rgba(255, 45, 111, 0.5);
-      transition: left 0.25s ease, top 0.25s ease, transform 0.18s ease, box-shadow 0.18s ease;
+      transition: left 0.12s ease-out, top 0.12s ease-out, transform 0.18s ease, box-shadow 0.18s ease;
     }
 
     .yes:hover {
@@ -160,8 +160,18 @@
       sub.textContent = teases[(dodges - 1) % teases.length];
     }
 
-    // Dodge on approach and on the press itself — it can never be clicked.
-    yes.addEventListener('mouseenter', dodge);
+    // Flee whenever the cursor gets near — even if a fast move lands on top.
+    const FLEE_RADIUS = 110; // px around the button that triggers a dodge
+    document.addEventListener('mousemove', function (e) {
+      const rect = yes.getBoundingClientRect();
+      // Distance from the pointer to the nearest edge of the button.
+      const nearestX = Math.max(rect.left, Math.min(e.clientX, rect.right));
+      const nearestY = Math.max(rect.top, Math.min(e.clientY, rect.bottom));
+      const dist = Math.hypot(e.clientX - nearestX, e.clientY - nearestY);
+      if (dist < FLEE_RADIUS) dodge(e);
+    });
+
+    // Backups: press and touch always dodge too, never click.
     yes.addEventListener('mousedown', function (e) { e.preventDefault(); dodge(e); });
     yes.addEventListener('click', function (e) { e.preventDefault(); dodge(e); });
     yes.addEventListener('touchstart', function (e) {
