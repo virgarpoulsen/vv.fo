@@ -106,8 +106,6 @@
     <p class="sub" id="sub">Just click yes… it's right there 😏</p>
 
     <button class="yes" id="yes">Yes 💖</button>
-
-    <p class="reward" id="reward">Yay! 🥰 It's a date! 💕</p>
   </main>
 
   <script>
@@ -124,18 +122,10 @@
       "Try again? 💞"
     ];
     let dodges = 0;
-    let caught = false;
 
     // Move the button SLIGHTLY away from where the cursor is heading.
     function dodge(e) {
-      if (caught) return;
-
-      // Once it has teased enough times, let it be caught. 💕
       dodges++;
-      if (dodges > 6) {
-        caught = true;
-        return;
-      }
 
       const pad = 12;
       const w = yes.offsetWidth;
@@ -167,47 +157,17 @@
       yes.style.left = nx + 'px';
       yes.style.top = ny + 'px';
 
-      sub.textContent = teases[Math.min(dodges - 1, teases.length - 1)];
+      sub.textContent = teases[(dodges - 1) % teases.length];
     }
 
-    // Dodge on approach and on the press itself, "as if you couldn't click it".
+    // Dodge on approach and on the press itself — it can never be clicked.
     yes.addEventListener('mouseenter', dodge);
-    yes.addEventListener('mousedown', function (e) {
-      if (!caught) { e.preventDefault(); dodge(e); }
-    });
+    yes.addEventListener('mousedown', function (e) { e.preventDefault(); dodge(e); });
+    yes.addEventListener('click', function (e) { e.preventDefault(); dodge(e); });
     yes.addEventListener('touchstart', function (e) {
-      if (!caught) { e.preventDefault(); dodge(e.touches[0]); }
+      e.preventDefault();
+      dodge(e.touches[0]);
     }, { passive: false });
-
-    // The one real click that lands (after it gives in). 💖
-    yes.addEventListener('click', function () {
-      if (!caught) return;
-      celebrate();
-    });
-
-    function celebrate() {
-      document.getElementById('reward').classList.add('show');
-      sub.textContent = "I knew you'd say yes 🥰";
-      yes.textContent = 'Yes!! 💖';
-      yes.style.transform = 'scale(1.1)';
-
-      for (let i = 0; i < 28; i++) {
-        const heart = document.createElement('div');
-        heart.textContent = ['💖', '💕', '💗', '❤️', '💞'][i % 5];
-        heart.style.position = 'fixed';
-        heart.style.left = Math.random() * 100 + 'vw';
-        heart.style.top = '110vh';
-        heart.style.fontSize = (1 + Math.random() * 1.6) + 'rem';
-        heart.style.pointerEvents = 'none';
-        heart.style.transition = 'transform 2.6s linear, opacity 2.6s linear';
-        document.body.appendChild(heart);
-        requestAnimationFrame(function () {
-          heart.style.transform = 'translateY(-130vh) rotate(' + (Math.random() * 120 - 60) + 'deg)';
-          heart.style.opacity = '0';
-        });
-        setTimeout(function () { heart.remove(); }, 2800);
-      }
-    }
   </script>
 </body>
 </html>
