@@ -110,33 +110,28 @@
   <script>
     const yes = document.getElementById('yes');
 
-    // Move the button SLIGHTLY away from where the cursor is heading.
+    // Jump to a RANDOM spot on screen — so it can't be herded into a corner.
     function dodge(e) {
       const pad = 12;
       const w = yes.offsetWidth;
       const h = yes.offsetHeight;
+      const maxX = Math.max(pad, window.innerWidth - w - pad);
+      const maxY = Math.max(pad, window.innerHeight - h - pad);
+
+      // Pointer position (fallback to current button centre).
       const rect = yes.getBoundingClientRect();
-      const cx = rect.left + w / 2;
-      const cy = rect.top + h / 2;
+      const px = e && e.clientX != null ? e.clientX : rect.left + w / 2;
+      const py = e && e.clientY != null ? e.clientY : rect.top + h / 2;
 
-      // Pointer position (fallback to button centre for keyboard/touch).
-      const px = e && e.clientX != null ? e.clientX : cx;
-      const py = e && e.clientY != null ? e.clientY : cy;
-
-      // Push a small step in the opposite direction of the pointer.
-      let dx = cx - px;
-      let dy = cy - py;
-      const len = Math.hypot(dx, dy) || 1;
-      const step = 90 + Math.random() * 50; // "slightly" — about a button-width
-      dx = (dx / len) * step + (Math.random() * 30 - 15);
-      dy = (dy / len) * step + (Math.random() * 30 - 15);
-
-      let nx = rect.left + dx;
-      let ny = rect.top + dy;
-
-      // Keep it on-screen.
-      nx = Math.max(pad, Math.min(window.innerWidth - w - pad, nx));
-      ny = Math.max(pad, Math.min(window.innerHeight - h - pad, ny));
+      // Pick a random landing spot that isn't right under the cursor.
+      let nx, ny;
+      for (let i = 0; i < 20; i++) {
+        nx = pad + Math.random() * (maxX - pad);
+        ny = pad + Math.random() * (maxY - pad);
+        const bx = Math.max(nx, Math.min(px, nx + w));
+        const by = Math.max(ny, Math.min(py, ny + h));
+        if (Math.hypot(px - bx, py - by) > FLEE_RADIUS + 40) break;
+      }
 
       yes.style.position = 'fixed';
       yes.style.left = nx + 'px';
