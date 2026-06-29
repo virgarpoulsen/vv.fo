@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Will you go on a date with me?</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 50% 30%, #2a0a1f 0%, #140510 60%, #0b0309 100%);
+      color: #ffeef5;
+      overflow: hidden;
+    }
+
+    .stage {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 1.5rem;
+    }
+
+    .heart-big {
+      font-size: clamp(3rem, 12vw, 6rem);
+      line-height: 1;
+      animation: beat 1.4s ease-in-out infinite;
+      filter: drop-shadow(0 0 24px rgba(255, 92, 146, 0.6));
+    }
+
+    h1 {
+      margin: 1.2rem 0 0.4rem;
+      font-size: clamp(1.8rem, 6vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      max-width: 16ch;
+    }
+
+    p.sub {
+      color: #ffb8d2;
+      font-size: clamp(1rem, 3vw, 1.3rem);
+      margin-bottom: 2.6rem;
+      opacity: 0.9;
+      min-height: 1.4em;
+    }
+
+    .yes {
+      font: inherit;
+      font-weight: 700;
+      font-size: clamp(1.2rem, 4vw, 1.7rem);
+      border: none;
+      border-radius: 999px;
+      padding: 1rem 2.6rem;
+      cursor: pointer;
+      color: #fff;
+      background: linear-gradient(135deg, #ff4d8d, #ff2d6f);
+      box-shadow: 0 10px 30px rgba(255, 45, 111, 0.5);
+      transition: left 0.25s ease, top 0.25s ease, transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .yes:hover {
+      box-shadow: 0 14px 40px rgba(255, 45, 111, 0.7);
+    }
+
+    .reward {
+      margin-top: 2rem;
+      font-size: clamp(1.2rem, 4vw, 1.8rem);
+      font-weight: 700;
+      color: #fff;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      pointer-events: none;
+    }
+
+    .reward.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes beat {
+      0%, 100% { transform: scale(1); }
+      15% { transform: scale(1.18); }
+      30% { transform: scale(1); }
+      45% { transform: scale(1.12); }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <div class="heart-big">💗</div>
+    <h1>Will you go on a date with me?</h1>
+    <p class="sub" id="sub">Just click yes… it's right there 😏</p>
+
+    <button class="yes" id="yes">Yes 💖</button>
+
+    <p class="reward" id="reward">Yay! 🥰 It's a date! 💕</p>
+  </main>
+
+  <script>
+    const yes = document.getElementById('yes');
+    const sub = document.getElementById('sub');
+
+    const teases = [
+      "Oops, too slow 😅",
+      "Almost had it!",
+      "Catch me if you can 🏃",
+      "Nice try 😘",
+      "So close…",
+      "Hehe, not yet!",
+      "Try again? 💞"
+    ];
+    let dodges = 0;
+    let caught = false;
+
+    // Move the button SLIGHTLY away from where the cursor is heading.
+    function dodge(e) {
+      if (caught) return;
+
+      // Once it has teased enough times, let it be caught. 💕
+      dodges++;
+      if (dodges > 6) {
+        caught = true;
+        return;
+      }
+
+      const pad = 12;
+      const w = yes.offsetWidth;
+      const h = yes.offsetHeight;
+      const rect = yes.getBoundingClientRect();
+      const cx = rect.left + w / 2;
+      const cy = rect.top + h / 2;
+
+      // Pointer position (fallback to button centre for keyboard/touch).
+      const px = e && e.clientX != null ? e.clientX : cx;
+      const py = e && e.clientY != null ? e.clientY : cy;
+
+      // Push a small step in the opposite direction of the pointer.
+      let dx = cx - px;
+      let dy = cy - py;
+      const len = Math.hypot(dx, dy) || 1;
+      const step = 90 + Math.random() * 50; // "slightly" — about a button-width
+      dx = (dx / len) * step + (Math.random() * 30 - 15);
+      dy = (dy / len) * step + (Math.random() * 30 - 15);
+
+      let nx = rect.left + dx;
+      let ny = rect.top + dy;
+
+      // Keep it on-screen.
+      nx = Math.max(pad, Math.min(window.innerWidth - w - pad, nx));
+      ny = Math.max(pad, Math.min(window.innerHeight - h - pad, ny));
+
+      yes.style.position = 'fixed';
+      yes.style.left = nx + 'px';
+      yes.style.top = ny + 'px';
+
+      sub.textContent = teases[Math.min(dodges - 1, teases.length - 1)];
+    }
+
+    // Dodge on approach and on the press itself, "as if you couldn't click it".
+    yes.addEventListener('mouseenter', dodge);
+    yes.addEventListener('mousedown', function (e) {
+      if (!caught) { e.preventDefault(); dodge(e); }
+    });
+    yes.addEventListener('touchstart', function (e) {
+      if (!caught) { e.preventDefault(); dodge(e.touches[0]); }
+    }, { passive: false });
+
+    // The one real click that lands (after it gives in). 💖
+    yes.addEventListener('click', function () {
+      if (!caught) return;
+      celebrate();
+    });
+
+    function celebrate() {
+      document.getElementById('reward').classList.add('show');
+      sub.textContent = "I knew you'd say yes 🥰";
+      yes.textContent = 'Yes!! 💖';
+      yes.style.transform = 'scale(1.1)';
+
+      for (let i = 0; i < 28; i++) {
+        const heart = document.createElement('div');
+        heart.textContent = ['💖', '💕', '💗', '❤️', '💞'][i % 5];
+        heart.style.position = 'fixed';
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.top = '110vh';
+        heart.style.fontSize = (1 + Math.random() * 1.6) + 'rem';
+        heart.style.pointerEvents = 'none';
+        heart.style.transition = 'transform 2.6s linear, opacity 2.6s linear';
+        document.body.appendChild(heart);
+        requestAnimationFrame(function () {
+          heart.style.transform = 'translateY(-130vh) rotate(' + (Math.random() * 120 - 60) + 'deg)';
+          heart.style.opacity = '0';
+        });
+        setTimeout(function () { heart.remove(); }, 2800);
+      }
+    }
+  </script>
+</body>
+</html>
