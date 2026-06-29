@@ -102,31 +102,16 @@
 <body>
   <main class="stage">
     <div class="heart-big">💗</div>
-    <h1>Will you go on a date with me?</h1>
-    <p class="sub" id="sub">Just click yes… it's right there 😏</p>
+    <h1>Vil tú á date við mær ?</h1>
 
-    <button class="yes" id="yes">Yes 💖</button>
+    <button class="yes" id="yes">Ja 💖</button>
   </main>
 
   <script>
     const yes = document.getElementById('yes');
-    const sub = document.getElementById('sub');
-
-    const teases = [
-      "Oops, too slow 😅",
-      "Almost had it!",
-      "Catch me if you can 🏃",
-      "Nice try 😘",
-      "So close…",
-      "Hehe, not yet!",
-      "Try again? 💞"
-    ];
-    let dodges = 0;
 
     // Move the button SLIGHTLY away from where the cursor is heading.
     function dodge(e) {
-      dodges++;
-
       const pad = 12;
       const w = yes.offsetWidth;
       const h = yes.offsetHeight;
@@ -156,8 +141,6 @@
       yes.style.position = 'fixed';
       yes.style.left = nx + 'px';
       yes.style.top = ny + 'px';
-
-      sub.textContent = teases[(dodges - 1) % teases.length];
     }
 
     // Flee whenever the cursor gets near — even if a fast move lands on top.
